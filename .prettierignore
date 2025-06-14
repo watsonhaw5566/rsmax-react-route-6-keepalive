@@ -1,0 +1,6 @@
+.idea
+.vscode
+# Lock files
+pnpm-lock.yaml
+
+lib
