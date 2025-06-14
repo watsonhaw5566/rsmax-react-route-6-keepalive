@@ -1,12 +1,13 @@
 import React from 'react';
 import {
-  Routes,
-  Route,
   Link,
-  useOutlet,
-  useLocation,
   matchPath,
+  Route,
+  Routes,
+  useLocation,
+  useOutlet,
 } from 'react-router-dom';
+
 const KeepAliveContext = React.createContext({});
 
 function Counter() {
@@ -75,6 +76,7 @@ const isKeepPath = (aliveList, path) => {
   });
   return isKeep;
 };
+
 function useKeepOutlets() {
   const location = useLocation();
   const element = useOutlet();
@@ -143,10 +145,12 @@ function Layout() {
 
 export default function App() {
   const keepElements = React.useRef({});
+
   // keepElements.current[location.pathname] = element;
   function dropByCacheKey(path) {
     keepElements.current[path] = null;
   }
+
   return (
     <KeepAliveContext.Provider
       value={{ keepalive: ['/about'], keepElements, dropByCacheKey }}
