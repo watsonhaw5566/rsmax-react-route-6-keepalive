@@ -1,16 +1,23 @@
-import * as React from 'react'
-import { Routes, Route, Link, useOutlet, useLocation, matchPath } from 'react-router-dom'
+import React from 'react';
+import {
+  Routes,
+  Route,
+  Link,
+  useOutlet,
+  useLocation,
+  matchPath,
+} from 'react-router-dom';
 const KeepAliveContext = React.createContext({});
 
 function Counter() {
-  const [count, setCount] = React.useState(0)
+  const [count, setCount] = React.useState(0);
 
   return (
     <div>
       <p>count: {count}</p>
       <button onClick={() => setCount((count) => count + 1)}>Add</button>
     </div>
-  )
+  );
 }
 
 function Home() {
@@ -19,18 +26,18 @@ function Home() {
       <h2>Home</h2>
       <Counter />
     </div>
-  )
+  );
 }
 
 function About() {
-  const { dropByCacheKey } = React.useContext<any>(KeepAliveContext);
+  const { dropByCacheKey } = React.useContext(KeepAliveContext);
   return (
     <div>
       <h2>About</h2>
       <Counter />
       <button onClick={() => dropByCacheKey('/about')}>dropByCacheKey</button>
     </div>
-  )
+  );
 }
 
 function Dashboard() {
@@ -39,7 +46,7 @@ function Dashboard() {
       <h2>Dashboard</h2>
       <Counter />
     </div>
-  )
+  );
 }
 
 function NoMatch() {
@@ -50,12 +57,12 @@ function NoMatch() {
         <Link to="/">Go to the home page</Link>
       </p>
     </div>
-  )
+  );
 }
 
-const isKeepPath = (aliveList: any[], path: string) => {
+const isKeepPath = (aliveList, path) => {
   let isKeep = false;
-  aliveList.map(item => {
+  aliveList.map((item) => {
     if (item === path) {
       isKeep = true;
     }
@@ -65,29 +72,47 @@ const isKeepPath = (aliveList: any[], path: string) => {
     if (typeof item === 'string' && item.toLowerCase() === path) {
       isKeep = true;
     }
-  })
+  });
   return isKeep;
-}
+};
 function useKeepOutlets() {
-  const location = useLocation()
-  const element = useOutlet()
-  const { keepElements, keepalive } = React.useContext<any>(KeepAliveContext);
+  const location = useLocation();
+  const element = useOutlet();
+  const { keepElements, keepalive } = React.useContext(KeepAliveContext);
   const isKeep = isKeepPath(keepalive, location.pathname);
   if (isKeep) {
     keepElements.current[location.pathname] = element;
   }
-  return <>
-    {
-      Object.entries(keepElements.current).map(([pathname, element]: any) => (
-        <div key={pathname} style={{ height: '100%', width: '100%', position: 'relative', overflow: 'hidden auto' }} hidden={!matchPath(location.pathname, pathname)}>
+  return (
+    <>
+      {Object.entries(keepElements.current).map(([pathname, element]) => (
+        <div
+          key={pathname}
+          style={{
+            height: '100%',
+            width: '100%',
+            position: 'relative',
+            overflow: 'hidden auto',
+          }}
+          hidden={!matchPath(location.pathname, pathname)}
+        >
           {element}
         </div>
-      ))
-    }
-    <div hidden={isKeep} style={{ height: '100%', width: '100%', position: 'relative', overflow: 'hidden auto' }} className="rumtime-keep-alive-layout-no">
-      {!isKeep && element}
-    </div>
-  </>
+      ))}
+      <div
+        hidden={isKeep}
+        style={{
+          height: '100%',
+          width: '100%',
+          position: 'relative',
+          overflow: 'hidden auto',
+        }}
+        className="rumtime-keep-alive-layout-no"
+      >
+        {!isKeep && element}
+      </div>
+    </>
+  );
 }
 
 function Layout() {
@@ -113,23 +138,27 @@ function Layout() {
       <hr />
       {keepOutlets}
     </div>
-  )
+  );
 }
 
 export default function App() {
-  const keepElements = React.useRef<any>({})
+  const keepElements = React.useRef({});
   // keepElements.current[location.pathname] = element;
-  function dropByCacheKey(path: string) {
+  function dropByCacheKey(path) {
     keepElements.current[path] = null;
   }
   return (
-    <KeepAliveContext.Provider value={{ keepalive: ['/about'], keepElements, dropByCacheKey }} >
+    <KeepAliveContext.Provider
+      value={{ keepalive: ['/about'], keepElements, dropByCacheKey }}
+    >
       <h1>Basic Example</h1>
 
       <p>
-        This example demonstrates some of the core features of React Router including nested <code>&lt;Route&gt;</code>
-        s, <code>&lt;Outlet&gt;</code>s, <code>&lt;Link&gt;</code>s, and using a "*" route (aka "splat route") to render
-        a "not found" page when someone visits an unrecognized URL.
+        This example demonstrates some of the core features of React Router
+        including nested <code>&lt;Route&gt;</code>
+        s, <code>&lt;Outlet&gt;</code>s, <code>&lt;Link&gt;</code>s, and using a
+        "*" route (aka "splat route") to render a "not found" page when someone
+        visits an unrecognized URL.
       </p>
 
       {/* Routes nest inside one another. Nested route paths build upon
@@ -148,5 +177,5 @@ export default function App() {
         </Route>
       </Routes>
     </KeepAliveContext.Provider>
-  )
+  );
 }
